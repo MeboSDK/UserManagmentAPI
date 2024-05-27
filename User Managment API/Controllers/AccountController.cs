@@ -43,7 +43,7 @@ namespace UserManagmentAPI.Controllers
         }
 
         [HttpGet("profile")]
-        [Authorize]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> GetUserProfile()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -54,7 +54,7 @@ namespace UserManagmentAPI.Controllers
         }
 
         [HttpPut("profile")]
-        [Authorize]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> UpdateUserProfile([FromBody] UpdateUserDTO userDto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

@@ -11,6 +11,7 @@ public class UserService : IUserService
     private readonly SignInManager<User> _signInManager;
     private readonly ITokenService _tokenService;
     private readonly IUnitOfWork _unitOfWork;
+
     public UserService(UserManager<User> userManager, 
                        SignInManager<User> signInManager, 
                        ITokenService tokenService, IUnitOfWork unitOfWork)
@@ -34,7 +35,7 @@ public class UserService : IUserService
             }
 
             await _unitOfWork.CommitAsync();
-            return await _tokenService.GenerateTokenAsync(user);
+            return  _tokenService.GenerateToken(user, await _userManager.GetRolesAsync(user));
         }
         throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
     }
@@ -50,7 +51,7 @@ public class UserService : IUserService
         var result = await _signInManager.PasswordSignInAsync(user.UserName, password, false, false);
         if (result.Succeeded)
         {
-            return await _tokenService.GenerateTokenAsync(user);
+            return _tokenService.GenerateToken(user,await _userManager.GetRolesAsync(user));
         }
 
         throw new Exception("Invalid credentials");
@@ -67,6 +68,7 @@ public class UserService : IUserService
             FirstName = user.FirstName,
             UserName = user.UserName,
             Email = user.Email,
+            Role = string.Join(",", await _userManager.GetRolesAsync(user))
             // Map other properties as needed
         };
     }
