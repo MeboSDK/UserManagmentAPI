@@ -30,7 +30,7 @@ namespace UserManagmentAPI.Controllers
             try
             {
                 var token = await _userService.RegisterAsync(userDto);
-                return Ok(new { token });
+                return Ok(token);
             }
             catch (Exception ex)
             {
@@ -45,7 +45,7 @@ namespace UserManagmentAPI.Controllers
             try
             {
                 var token = await _userService.LoginAsync(email, password);
-                return Ok(new { Token = token });
+                return Ok(token);
             }
             catch (Exception ex)
             {
