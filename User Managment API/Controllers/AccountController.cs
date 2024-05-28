@@ -11,9 +11,12 @@ namespace UserManagmentAPI.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IUserService _userService;
-        public AccountController(IUserService userService)
+        private readonly ILogger<AccountController> _logger;
+
+        public AccountController(IUserService userService, ILogger<AccountController> logger)
         {
             _userService = userService;
+            _logger = logger;
         }
 
         [HttpPost("register")]
@@ -31,6 +34,7 @@ namespace UserManagmentAPI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
@@ -38,8 +42,16 @@ namespace UserManagmentAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromQuery] string email, [FromQuery] string password)
         {
-            var token = await _userService.LoginAsync(email, password);
-            return Ok(new { Token = token });
+            try
+            {
+                var token = await _userService.LoginAsync(email, password);
+                return Ok(new { Token = token });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpGet("profile")]
@@ -57,13 +69,21 @@ namespace UserManagmentAPI.Controllers
         [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> UpdateUserProfile([FromBody] UpdateUserDTO userDto)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null) return Unauthorized();
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userId == null) return Unauthorized();
 
-            var success = await _userService.UpdateUserProfileAsync(userId, userDto);
-            if (success) return NoContent();
+                var success = await _userService.UpdateUserProfileAsync(userId, userDto);
+                if (success) return NoContent();
 
-            return BadRequest("Failed to update user profile");
+                return BadRequest("Failed to update user profile");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
     }
 }
