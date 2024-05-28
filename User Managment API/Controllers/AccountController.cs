@@ -58,11 +58,20 @@ namespace UserManagmentAPI.Controllers
         [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> GetUserProfile()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null) return Unauthorized();
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userId == null) return Unauthorized();
 
-            var userProfile = await _userService.GetUserProfileAsync(userId);
-            return Ok(userProfile);
+                var userProfile = await _userService.GetUserProfileAsync(userId);
+                return Ok(userProfile);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+
+            }
         }
 
         [HttpPut("profile")]
