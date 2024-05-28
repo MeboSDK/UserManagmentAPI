@@ -17,6 +17,8 @@ namespace Application.Validators
                 .NotEmpty().WithMessage("Please ensure that to set a value for {PropertyName}")
                 .Must(BeValidName).WithMessage("Please ensure that to set a valid value for {PropertyName}")
                 .Length(3, 30);
+
+            RuleFor(x => x.Email).EmailAddress(FluentValidation.Validators.EmailValidationMode.AspNetCoreCompatible);
         }
 
         private bool BeValidName(string name)
