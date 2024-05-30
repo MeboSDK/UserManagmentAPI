@@ -1,6 +1,6 @@
-# User Managment API
+# User Managment API Introduction
 
-Introduction : This .NET API project is designed to show what user management looks like in a secure way. This API has Register, Login, Update Profile and Get Profile functions. After Registration or Authorization, you will have JWT Token which is necessary to have access to your profile. This API uses Swagger UI for easy managment and testing. For Database access, this one uses EntityFramework Core to access SQLServer.
+This .NET API project is designed to show what user management looks like in a secure way. This API has Register, Login, Update Profile and Get Profile functions. After Registration or Authorization, you will have JWT Token which is necessary to have access to your profile. This API uses Swagger UI for easy managment and testing. For Database access, this one uses EntityFramework Core to access SQLServer.
 
 # Technologies 
 
